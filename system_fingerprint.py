@@ -6,7 +6,8 @@ import uuid
 import string
 import random_utils
 
-logger = log_helper.setup_logger(name="system_fingerpring", level=logging.INFO, log_to_file=False)
+logger = log_helper.setup_logger(
+    name="system_fingerpring", level=logging.INFO, log_to_file=False)
 
 
 class WinFingerprint:
@@ -63,27 +64,33 @@ class WinFingerprint:
                           "KB3160005", "KB3154070", "KB3148198"]
 
     def __init__(self):
-        self.windows_version = random.choice([7, 8, 10])
+        # self.windows_version = random.choice([7, 8, 10])
+        self.windows_version = 10
         self.oem_version = random.randint(0, 1)
         self.product_name = WinFingerprint.BUILDS[self.windows_version][WinFingerprint.PRODUCT_NAME]
         self.current_version = WinFingerprint.BUILDS[self.windows_version][WinFingerprint.CURRENT_VERSION]
         self.current_build = WinFingerprint.BUILDS[self.windows_version][WinFingerprint.CURRENT_BUILD]
         self.build_lab = WinFingerprint.BUILDS[self.windows_version][WinFingerprint.BUILD_LAB]
         self.build_lab_ex = WinFingerprint.BUILDS[self.windows_version][WinFingerprint.BUILD_LAB_EX]
-        random_edition = random.choice(WinFingerprint.EDITIONS[self.windows_version])
+        random_edition = random.choice(
+            WinFingerprint.EDITIONS[self.windows_version])
         self.edition_id = random_edition[WinFingerprint.EDITION_ID]
         if self.edition_id == "OEM":
             self.oem_version = 1
         self.edition_product_name = random_edition[WinFingerprint.EDITION_NAME]
-        self.install_date = random_utils.random_unix_time("01.01.2012", "01.01.2018")
+        self.install_date = random_utils.random_unix_time(
+            "01.01.2012", "01.01.2018")
         self.pid1 = random_utils.random_digit_string(5)
-        self.pid2 = "OEM" if self.oem_version else random_utils.random_digit_string(3)
+        self.pid2 = "OEM" if self.oem_version else random_utils.random_digit_string(
+            3)
         self.pid3 = random_utils.random_digit_string(7)
         self.pid4 = random_utils.random_digit_string(5)
         self.retail_oem = "OEM" if self.oem_version else "Retail"
-        self.build_guid = str(uuid.uuid4()) if self.windows_version == 7 else "ffffffff-ffff-ffff-ffff-ffffffffffff"
+        self.build_guid = str(uuid.uuid4(
+        )) if self.windows_version == 7 else "ffffffff-ffff-ffff-ffff-ffffffffffff"
         self.uuid_id4 = str(uuid.uuid4())
-        self.ie_service_update = random.choice(WinFingerprint.IE_SERVICE_UPDATES)
+        self.ie_service_update = random.choice(
+            WinFingerprint.IE_SERVICE_UPDATES)
         self.ie_install_date = bytearray(os.urandom(8))
         self.digital_product_id = []
         self.digital_product_id4 = []
@@ -213,13 +220,16 @@ class WinFingerprint:
         random_digital_id4[0x08:0x08 + len(random_id1) + 1] = random_id1
         # 0x88 - UUID
         product_guid_id4 = random_utils.disperse_string(self.uuid_id4)
-        random_digital_id4[0x88:0x88 + len(product_guid_id4) + 1] = product_guid_id4
+        random_digital_id4[0x88:0x88
+                           + len(product_guid_id4) + 1] = product_guid_id4
         # 0x0118 - Edition
         product_edition = random_utils.disperse_string(self.edition_id)
-        random_digital_id4[0x0118:0x0118 + len(product_edition) + 1] = product_edition
+        random_digital_id4[0x0118:0x0118
+                           + len(product_edition) + 1] = product_edition
         # 0x0328 - random length 80
         random_block = random.sample(range(0, 0xFF), 80)
-        random_digital_id4[0x0328:0x0328 + len(random_block) + 1] = random_block
+        random_digital_id4[0x0328:0x0328
+                           + len(random_block) + 1] = random_block
         # 0x0378 - XNN-NNNNN
         random_id2_string = "{0}{1}-{2}".format(
             ''.join(random.sample(string.ascii_uppercase, 1)),
